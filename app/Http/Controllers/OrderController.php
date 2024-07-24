@@ -33,6 +33,8 @@ class OrderController extends Controller
      */
     public function store(StoreOrderRequest $request)
     {
+        dd($request->all());
+        
         try {
             DB::transaction(function () use ($request) {
                 $customer = Customer::create($request->customer);

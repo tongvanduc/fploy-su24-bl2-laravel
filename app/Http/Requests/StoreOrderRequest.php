@@ -25,18 +25,18 @@ class StoreOrderRequest extends FormRequest
             'customer' => 'array|required_array_keys:name,address,phone,email',
             'customer.name' => 'required',
             'customer.address' => 'required',
-            'customer.phone' => 'required',
-            'customer.email' => 'required|email',
+            'customer.phone' => 'required|unique:customers,phone',
+            'customer.email' => 'required|email|unique:customers,email',
 
             'supplier' => 'array|required_array_keys:name,address,phone,email',
             'supplier.name' => 'required',
             'supplier.address' => 'required',
-            'supplier.phone' => 'required',
-            'supplier.email' => 'required|email',
+            'supplier.phone' => 'required|unique:customers,phone',
+            'supplier.email' => 'required|email|unique:customers,email',
 
             'products' => 'array',
-            'products.*' => 'array|required_array_keys:name,image,description,price,stock_qty',
-            'products.*.name' => 'required',
+            'products.*' => 'array|required_array_keys:name,description,price,stock_qty',
+            'products.*.name' => 'required|unique:products,name',
             'products.*.image' => 'nullable|image|max:2048',
             'products.*.description' => 'nullable',
             'products.*.price' => 'required|integer|min:0',
@@ -45,6 +45,14 @@ class StoreOrderRequest extends FormRequest
             'order_details' => 'array',
             'order_details.*' => 'array|required_array_keys:qty',
             'order_details.*.qty' => 'required|integer|min:0',
+        ];
+        
+    }
+
+    public function attributes() {
+        return [
+            'customer.name' => 'customer name', 
+            'products.*.name' => 'product name'
         ];
     }
 }

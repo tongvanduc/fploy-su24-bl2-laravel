@@ -60,6 +60,7 @@
             </div>
 
             <div class="col-md-12">
+                <h2 class="mt-3 mb-3">Danh sách sản phẩm</h2>
                 <div class="table-responsive">
                     <table>
                         <tr>
@@ -70,22 +71,30 @@
                             <th>Stock Qty</th>
                             <th>Qty (số lượng bán)</th>
                         </tr>
-
                         @for ($i = 0; $i < 2; $i++)
                             <tr>
-                                <td><input type="text" class="form-control" name="products[{{ $i }}][name]">
+                                <td>
+                                    <input type="text" class="form-control" name="products[{{ $i }}][name]" 
+                                        value="{{ old("products.$i.name") }}">
+                                    @error("products.$i.name")
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </td>
-                                <td><input type="file" class="form-control" name="products[{{ $i }}][image]">
+                                <td>
+                                    <input type="file" class="form-control" name="products[{{ $i }}][image]">
                                 </td>
-                                <td><input type="text" class="form-control"
-                                        name="products[{{ $i }}][description]"></td>
-                                <td><input type="number" class="form-control" name="products[{{ $i }}][price]">
+                                <td>
+                                    <input type="text" class="form-control" name="products[{{ $i }}][description]"></td>
+                                <td>
+                                    <input type="number" class="form-control" name="products[{{ $i }}][price]">
                                 </td>
-                                <td><input type="number" class="form-control"
-                                        name="products[{{ $i }}][stock_qty]"></td>
+                                <td>
+                                    <input type="number" class="form-control" name="products[{{ $i }}][stock_qty]">
+                                </td>
 
-                                <td><input type="number" class="form-control"
-                                        name="order_details[{{ $i }}][qty]"></td>
+                                <td>
+                                    <input type="number" class="form-control" name="order_details[{{ $i }}][qty]">
+                                </td>
                             </tr>
                         @endfor
 
