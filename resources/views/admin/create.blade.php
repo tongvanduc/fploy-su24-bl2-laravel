@@ -1,0 +1,100 @@
+@extends('admin.master')
+
+@section('title')
+    Thêm mới đơn hàng
+@endsection
+
+@section('content')
+
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+    
+    <form action="{{ route('orders.store') }}" method="post" enctype="multipart/form-data">
+        @csrf
+
+        <div class="row">
+            <div class="col-md-6">
+                <h2 class="mt-3 mb-3">Customer</h2>
+                <div class="mt-3">
+                    <label for="customer_name">Name</label>
+                    <input type="text" name="customer[name]" id="customer_name" class="form-control">
+                </div>
+                <div class="mt-3">
+                    <label for="customer_address">Address</label>
+                    <input type="text" name="customer[address]" id="customer_address" class="form-control">
+                </div>
+                <div class="mt-3">
+                    <label for="customer_phone">Phone</label>
+                    <input type="tel" name="customer[phone]" id="customer_phone" class="form-control">
+                </div>
+                <div class="mt-3">
+                    <label for="customer_email">Email</label>
+                    <input type="email" name="customer[email]" id="customer_email" class="form-control">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h2 class="mt-3 mb-3">Suppiler</h2>
+                <div class="mt-3">
+                    <label for="suppiler_name">Name</label>
+                    <input type="text" name="supplier[name]" id="suppiler_name" class="form-control">
+                </div>
+                <div class="mt-3">
+                    <label for="suppiler_address">Address</label>
+                    <input type="text" name="supplier[address]" id="suppiler_address" class="form-control">
+                </div>
+                <div class="mt-3">
+                    <label for="suppiler_phone">Phone</label>
+                    <input type="tel" name="supplier[phone]" id="suppiler_phone" class="form-control">
+                </div>
+                <div class="mt-3">
+                    <label for="suppiler_email">Email</label>
+                    <input type="email" name="supplier[email]" id="suppiler_email" class="form-control">
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table>
+                        <tr>
+                            <th>Name</th>
+                            <th>Image</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Stock Qty</th>
+                            <th>Qty (số lượng bán)</th>
+                        </tr>
+
+                        @for ($i = 0; $i < 2; $i++)
+                            <tr>
+                                <td><input type="text" class="form-control" name="products[{{ $i }}][name]">
+                                </td>
+                                <td><input type="file" class="form-control" name="products[{{ $i }}][image]">
+                                </td>
+                                <td><input type="text" class="form-control"
+                                        name="products[{{ $i }}][description]"></td>
+                                <td><input type="number" class="form-control" name="products[{{ $i }}][price]">
+                                </td>
+                                <td><input type="number" class="form-control"
+                                        name="products[{{ $i }}][stock_qty]"></td>
+
+                                <td><input type="number" class="form-control"
+                                        name="order_details[{{ $i }}][qty]"></td>
+                            </tr>
+                        @endfor
+
+                    </table>
+                </div>
+            </div>
+
+            <button type="submit" class="mt-3 btn btn-primary">Submit</button>
+        </div>
+
+    </form>
+@endsection
