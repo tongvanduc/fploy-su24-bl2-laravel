@@ -11,7 +11,7 @@ class UpdateOrderRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,13 @@ class UpdateOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'order_details.*.qty' => 'required|integer|min:1',
+        ];
+    }
+
+    public function attributes() {
+        return [
+            'order_details.*.qty' => 'qty buy'
         ];
     }
 }

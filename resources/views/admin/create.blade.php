@@ -89,7 +89,7 @@
             <div class="col-md-12">
                 <h2 class="mt-3 mb-3">Danh sách sản phẩm</h2>
                 <div class="table-responsive">
-                    <table>
+                    <table class="table">
                         <tr>
                             <th>Name</th>
                             <th>Image</th>

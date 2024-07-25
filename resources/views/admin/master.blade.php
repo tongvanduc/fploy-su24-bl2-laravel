@@ -18,7 +18,7 @@
 
     <div class="container">
         <div class="row">
-            <h1 class="text-center">@yield('title')</h1>
+            <h1 class="text-center mt-3 mb-3">@yield('title')</h1>
 
             <div class="col-md-12">
                 @yield('content')

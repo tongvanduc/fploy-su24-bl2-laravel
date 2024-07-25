@@ -19,7 +19,9 @@ class OrderController extends Controller
      */
     public function index()
     {
-        dd(session('success'));
+        $orders = Order::with(['customer', 'products'])->latest('id')->paginate(1);
+
+        return view('admin.index', compact('orders'));
     }
 
     /**
@@ -89,7 +91,9 @@ class OrderController extends Controller
      */
     public function edit(Order $order)
     {
-        //
+        $order->load(['customer', 'products']);
+
+        return view('admin.edit', compact('order'));
     }
 
     /**
@@ -97,7 +101,25 @@ class OrderController extends Controller
      */
     public function update(UpdateOrderRequest $request, Order $order)
     {
-        //
+        try {
+            DB::transaction(function () use ($order, $request) {
+                $order->products()->sync($request->order_details);
+
+                $orderDetail = array_map(function($item) {
+                    return $item['price'] * $item['qty'];
+                }, $request->order_details);
+
+                $totalAmount = array_sum($orderDetail);
+
+                $order->update([
+                    'total_amount' => $totalAmount
+                ]);
+            }, 3);
+
+            return back()->with('success', 'Thao tác thành công!');
+        } catch (Exception $exception) {
+            return back()->with('error', $exception->getMessage());
+        }
     }
 
     /**
@@ -105,6 +127,16 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        //
+        try {
+            DB::transaction(function () use ($order) {
+                $order->products()->sync([]);
+
+                $order->delete();
+            }, 3);
+
+            return back()->with('success', 'Thao tác thành công!');
+        } catch (Exception $exception) {
+            return back()->with('error', $exception->getMessage());
+        }
     }
 }
