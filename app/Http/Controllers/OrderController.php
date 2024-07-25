@@ -6,9 +6,11 @@ use App\Models\Order;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use App\Models\Customer;
+use App\Models\Product;
 use App\Models\Supplier;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
@@ -17,7 +19,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        dd(session('success'));
     }
 
     /**
@@ -33,19 +35,44 @@ class OrderController extends Controller
      */
     public function store(StoreOrderRequest $request)
     {
-        dd($request->all());
-        
         try {
             DB::transaction(function () use ($request) {
                 $customer = Customer::create($request->customer);
                 $supplier = Supplier::create($request->supplier);
 
-                foreach ($request->product as $key => $product) {
-                    
+                $orderDetails = [];
+                $totalAmount = 0;
+                foreach ($request->products as $key => $product) {
+
+                    $product['supplier_id'] = $supplier->id;
+
+                    if ($request->hasFile("products.$key.image")) {
+                        $product['image'] = Storage::put('products', $request->file("products.$key.image"));
+                    }
+
+                    $tmp = Product::query()->create($product);
+
+                    $orderDetails[$tmp->id] = [
+                        'qty' => $request->order_details[$key]['qty'],
+                        'price' => $tmp->price
+                    ];
+
+                    $totalAmount += $request->order_details[$key]['qty'] * $tmp->price;
                 }
+
+                $order = Order::query()->create([
+                    'customer_id' => $customer->id,
+                    'total_amount' => $totalAmount,
+                ]);
+
+                $order->products()->attach($orderDetails);
             }, 3);
-        } catch(Exception $exception) {
-            
+
+            return redirect()
+                ->route('orders.index')
+                ->with('success', 'Thao tác thành công!');
+        } catch (Exception $exception) {
+            return back()->with('error', $exception->getMessage());
         }
     }
 

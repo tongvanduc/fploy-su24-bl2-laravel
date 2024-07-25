@@ -44,7 +44,7 @@ class StoreOrderRequest extends FormRequest
 
             'order_details' => 'array',
             'order_details.*' => 'array|required_array_keys:qty',
-            'order_details.*.qty' => 'required|integer|min:0',
+            'order_details.*.qty' => 'required|integer|min:0|lte:products.*.stock_qty',
         ];
         
     }
@@ -52,7 +52,22 @@ class StoreOrderRequest extends FormRequest
     public function attributes() {
         return [
             'customer.name' => 'customer name', 
-            'products.*.name' => 'product name'
+            'customer.address' => 'customer address', 
+            'customer.phone' => 'customer phone', 
+            'customer.email' => 'customer email', 
+
+            'supplier.name' => 'supplier name', 
+            'supplier.address' => 'supplier address', 
+            'supplier.phone' => 'supplier phone', 
+            'supplier.email' => 'supplier email', 
+
+            'products.*.name' => 'product name',
+            'products.*.image' => 'product image',
+            'products.*.description' => 'product description',
+            'products.*.price' => 'product price',
+            'products.*.stock_qty' => 'product stock qty',
+
+            'order_details.*.qty' => 'qty buy'
         ];
     }
 }
