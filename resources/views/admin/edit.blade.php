@@ -36,22 +36,22 @@
                             <th>Price</th>
                             <th>Qty (số lượng bán)</th>
                         </tr>
-                        @foreach ($order->products as $product)
+                        @foreach ($order->details as $detail)
                             <tr>
                                 <td>
-                                    {{ $product->name }}
+                                    {{ $detail->name }}
                                 </td>
                                 <td>
-                                    {{ number_format($product->price) }}
+                                    {{ number_format($detail->price) }}
                                 </td>
                                 <td>
-                                    <input type="hidden" name="order_details[{{ $product->id }}][price]"
-                                        value="{{ $product->pivot->price }}">
+                                    <input type="hidden" name="order_details[{{ $detail->id }}][price]"
+                                        value="{{ $detail->pivot->price }}">
 
                                     <input type="number"
-                                        class="form-control" name="order_details[{{ $product->id }}][qty]"
-                                        value="{{ $product->pivot->qty }}">
-                                    @error("order_details.$product->id.qty")
+                                        class="form-control" name="order_details[{{ $detail->id }}][qty]"
+                                        value="{{ $detail->pivot->qty }}">
+                                    @error("order_details.$detail->id.qty")
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </td>

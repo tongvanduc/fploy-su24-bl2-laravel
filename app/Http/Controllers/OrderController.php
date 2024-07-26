@@ -19,7 +19,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::with(['customer', 'products'])->latest('id')->paginate(1);
+        $orders = Order::with(['customer', 'details'])->latest('id')->paginate(1);
 
         return view('admin.index', compact('orders'));
     }
@@ -37,19 +37,20 @@ class OrderController extends Controller
      */
     public function store(StoreOrderRequest $request)
     {
+        $images = [];
+
         try {
-            DB::transaction(function () use ($request) {
+            DB::transaction(function () use ($request, &$images) {
                 $customer = Customer::create($request->customer);
                 $supplier = Supplier::create($request->supplier);
 
                 $orderDetails = [];
                 $totalAmount = 0;
                 foreach ($request->products as $key => $product) {
-
                     $product['supplier_id'] = $supplier->id;
 
                     if ($request->hasFile("products.$key.image")) {
-                        $product['image'] = Storage::put('products', $request->file("products.$key.image"));
+                        $images[] = $product['image'] = Storage::put('products', $request->file("products.$key.image"));
                     }
 
                     $tmp = Product::query()->create($product);
@@ -67,13 +68,20 @@ class OrderController extends Controller
                     'total_amount' => $totalAmount,
                 ]);
 
-                $order->products()->attach($orderDetails);
+                $order->details()->attach($orderDetails);
             }, 3);
 
             return redirect()
                 ->route('orders.index')
                 ->with('success', 'Thao tác thành công!');
         } catch (Exception $exception) {
+
+            foreach ($images as $image) {
+                if (Storage::exists($image)) {
+                    Storage::delete($image);
+                }
+            }
+
             return back()->with('error', $exception->getMessage());
         }
     }
@@ -91,7 +99,7 @@ class OrderController extends Controller
      */
     public function edit(Order $order)
     {
-        $order->load(['customer', 'products']);
+        $order->load(['customer', 'details']);
 
         return view('admin.edit', compact('order'));
     }
@@ -103,7 +111,7 @@ class OrderController extends Controller
     {
         try {
             DB::transaction(function () use ($order, $request) {
-                $order->products()->sync($request->order_details);
+                $order->details()->sync($request->order_details);
 
                 $orderDetail = array_map(function($item) {
                     return $item['price'] * $item['qty'];
@@ -129,7 +137,7 @@ class OrderController extends Controller
     {
         try {
             DB::transaction(function () use ($order) {
-                $order->products()->sync([]);
+                $order->details()->sync([]);
 
                 $order->delete();
             }, 3);

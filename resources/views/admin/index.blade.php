@@ -47,14 +47,14 @@
                             </td>
                             <td>{{ number_format($order->total_amount) }}</td>
                             <td>
-                                @foreach ($order->products as $product)
-                                    <h6>Sản phẩm: {{ $product->name }}</h6>
+                                @foreach ($order->details as $detail)
+                                    <h6>Sản phẩm: {{ $detail->name }}</h6>
                                     <ul>
-                                        <li>Giá: {{ number_format($product->pivot->price) }}</li>
-                                        <li>Số lượng: {{ $product->pivot->qty }}</li>
-                                        @if ($product->image && \Storage::exists($product->image))
+                                        <li>Giá: {{ number_format($detail->pivot->price) }}</li>
+                                        <li>Số lượng: {{ $detail->pivot->qty }}</li>
+                                        @if ($detail->image && \Storage::exists($detail->image))
                                             <li>
-                                                <img width="100px" src="{{ \Storage::url($product->image) }}" alt="">
+                                                <img width="100px" src="{{ \Storage::url($detail->image) }}" alt="">
                                             </li>
                                         @endif
                                     </ul>
