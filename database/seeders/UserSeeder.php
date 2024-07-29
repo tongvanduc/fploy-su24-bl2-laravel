@@ -13,22 +13,21 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        for($i = 0; $i < 10; $i++) {
+        $a = now();
+        $b = bcrypt('password');
+        for($i = 0; $i < 500; $i++) {
 
-            $userID = DB::table('users')->insertGetId([
+            $c = \Str::random(10);
+
+            $data[] = [
                 'name' => fake()->name(),
-                'email' => fake()->unique()->safeEmail(),
-                'email_verified_at' => now(),
-                'password' => bcrypt('password'),
-                'remember_token' => \Str::random(10),
-            ]);
-
-            DB::table('user_details')->insert([
-                'user_id' => $userID,
-                'address' => fake()->address(),
-                'phone' => fake()->phoneNumber()
-            ]);
-
+                'email' => $i . $c . '@gmail.com',
+                'email_verified_at' => $a,
+                'password' => $b,
+                'remember_token' => $c,
+            ];
         }
+
+        DB::table('users')->insert($data);
     }
 }

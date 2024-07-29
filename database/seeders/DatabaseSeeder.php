@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Example;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -12,11 +14,24 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\User::factory(10)->create();
+        $this->call(UserSeeder::class);
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        echo "=====================================" . PHP_EOL;
+
+        for($i = 0; $i < 100; $i++) {
+            Example::create([
+                'user_ids' => [
+                    rand(1, 100),
+                    rand(101, 200),
+                    rand(201, 300),
+                    rand(301, 500),
+                ],
+
+                'info' => [
+                    "age" => 25, 
+                    "city" => "Los Angeles"
+                ]
+            ]);
+        }
     }
 }
